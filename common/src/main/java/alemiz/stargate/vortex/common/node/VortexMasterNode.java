@@ -1,0 +1,71 @@
+/*
+ * Copyright 2021 Alemiz
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package alemiz.stargate.vortex.common.node;
+
+import alemiz.stargate.StarGateSession;
+import alemiz.stargate.vortex.common.protocol.packet.VortexChildInfoPacket;
+import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
+import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public abstract class VortexMasterNode extends VortexNode implements ServerSideNode {
+
+    private final Map<String, VortexNode> childNodes = new ConcurrentHashMap<>();
+
+    public VortexMasterNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
+        super(vortexType, session, vortexParent);
+    }
+
+    @Override
+    protected boolean handleInternal(VortexPacket packet) {
+        if (packet instanceof VortexMessagePacket && this.onMessagePacket((VortexMessagePacket) packet)) {
+            return true;
+        }
+        return super.handleInternal(packet);
+    }
+
+    private boolean onMessagePacket(VortexMessagePacket packet) {
+        // Broadcast any message recived from master to all child nodes
+        for (VortexNode vortexNode : this.childNodes.values()) {
+            vortexNode.sendPacket(packet);
+        }
+        return true;
+    }
+
+    public void registerChildNode(VortexNode node) {
+        this.childNodes.put(node.getName(), node);
+
+        VortexChildInfoPacket packet = new VortexChildInfoPacket();
+        packet.setNodeName(node.getName());
+        packet.setAction(VortexChildInfoPacket.Action.ADD);
+        this.sendPacket(packet);
+    }
+
+    public void unregisterChildNode(VortexNode node) {
+        this.childNodes.remove(node.getName());
+
+        VortexChildInfoPacket packet = new VortexChildInfoPacket();
+        packet.setNodeName(node.getName());
+        packet.setAction(VortexChildInfoPacket.Action.REMOVE);
+        this.sendPacket(packet);
+    }
+
+    public VortexNode getChildNode(String name) {
+        return this.childNodes.get(name);
+    }
+}
