@@ -19,19 +19,38 @@ import alemiz.stargate.StarGateSession;
 import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePacket;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Log4j2
 public abstract class VortexChildNode extends VortexNode implements ServerSideNode {
 
     private String primaryMasterNode;
     private final Map<String, VortexMasterNode> masterNodes = new ConcurrentHashMap<>();
 
-    public VortexChildNode(StarGateSession session, VortexNodeParent vortexParent) {
+    public VortexChildNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
+    }
+
+    @Override
+    public void handleClientHandshake(VortexClientHandshakePacket handshake) {
+        for (String nodeName : handshake.getMasterNodes()) {
+            VortexNode masterNode = this.getVortexParent().getVortexNode(nodeName);
+            if (!(masterNode instanceof VortexMasterNode)) {
+                log.warn(nodeName + " is not master node!");
+            } else {
+                this.registerToMasterNode((VortexMasterNode) masterNode);
+            }
+        }
+
+        String masterNodeName = handshake.getPrimaryMasterNode();
+        if (masterNodeName != null && !masterNodeName.isEmpty()) {
+            this.setPrimaryMasterNode(masterNodeName);
+        }
     }
 
     @Override
@@ -101,5 +120,10 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
 
     public void setPrimaryMasterNode(String primaryMasterNode) {
         this.primaryMasterNode = primaryMasterNode;
+    }
+
+    @Override
+    public VortexServerNodeOwner getVortexParent() {
+        return (VortexServerNodeOwner) super.getVortexParent();
     }
 }

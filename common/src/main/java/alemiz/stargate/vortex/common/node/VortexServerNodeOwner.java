@@ -15,12 +15,11 @@
 
 package alemiz.stargate.vortex.common.node;
 
-import alemiz.stargate.vortex.common.data.VortexSettings;
-import alemiz.stargate.vortex.common.protocol.VortexPacketPool;
+import java.net.InetSocketAddress;
 
-public interface VortexNodeParent {
+public interface VortexServerNodeOwner extends VortexNodeOwner {
 
-    VortexSettings getSettings();
+    VortexNode getVortexNode(String nodeName);
 
-    VortexPacketPool getPacketPool();
+    VortexNode getVortexNode(InetSocketAddress address);
 }

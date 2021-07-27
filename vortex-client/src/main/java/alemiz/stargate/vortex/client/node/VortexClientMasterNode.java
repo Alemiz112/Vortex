@@ -21,7 +21,7 @@ import alemiz.stargate.vortex.client.VortexClient;
 import alemiz.stargate.vortex.client.data.ChildNodeData;
 import alemiz.stargate.vortex.common.node.ClientSideNode;
 import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeParent;
+import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
 import alemiz.stargate.vortex.common.protocol.packet.VortexChildInfoPacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
@@ -36,7 +36,7 @@ import static alemiz.stargate.vortex.client.VortexClient.DEFAULT_MASTER_NODE;
 public class VortexClientMasterNode extends VortexNode implements ClientSideNode {
     private final Map<String, ChildNodeData> childDataMap = new ConcurrentHashMap<>();
 
-    public VortexClientMasterNode(StarGateSession session, VortexNodeParent vortexParent) {
+    public VortexClientMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 

@@ -16,4 +16,6 @@
 package alemiz.stargate.vortex.common.node;
 
 public interface ClientSideNode {
+
+    VortexNodeOwner getVortexParent();
 }

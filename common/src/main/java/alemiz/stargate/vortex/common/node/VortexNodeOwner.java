@@ -15,9 +15,12 @@
 
 package alemiz.stargate.vortex.common.node;
 
-import alemiz.stargate.StarGateSession;
+import alemiz.stargate.vortex.common.data.VortexSettings;
+import alemiz.stargate.vortex.common.protocol.VortexPacketPool;
 
-public interface VortexNodeFactory {
+public interface VortexNodeOwner {
 
-    VortexNode newInstance(StarGateSession session, VortexNodeOwner vortexParent);
+    VortexSettings getSettings();
+
+    VortexPacketPool getPacketPool();
 }

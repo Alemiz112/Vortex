@@ -19,6 +19,8 @@ import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePack
 
 public interface ServerSideNode {
 
+    VortexServerNodeOwner getVortexParent();
+
     default void handleClientHandshake(VortexClientHandshakePacket handshake) {
     }
 }

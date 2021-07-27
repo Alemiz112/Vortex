@@ -27,7 +27,7 @@ import alemiz.stargate.vortex.client.node.VortexClientNode;
 import alemiz.stargate.vortex.client.stargate.StarGateListener;
 import alemiz.stargate.vortex.common.VortexLogger;
 import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeParent;
+import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
 import alemiz.stargate.vortex.common.protocol.VortexPacketPool;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePacket;
@@ -35,7 +35,7 @@ import alemiz.stargate.vortex.common.protocol.stargate.VortexGatePacket;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class VortexClient implements ServerLoader, VortexNodeParent {
+public class VortexClient implements ServerLoader, VortexNodeOwner {
 
     // Force init default node types
     public static VortexNodeType DEFAULT_MASTER_NODE = VortexNodeType.from("vortex-master", VortexClientMasterNode::new);

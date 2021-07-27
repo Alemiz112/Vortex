@@ -21,7 +21,7 @@ import alemiz.stargate.server.StarGateServer;
 import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
 import alemiz.stargate.vortex.common.data.VortexSettings;
-import alemiz.stargate.vortex.common.node.VortexNodeParent;
+import alemiz.stargate.vortex.common.node.VortexServerNodeOwner;
 import alemiz.stargate.vortex.common.protocol.VortexPacketPool;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePacket;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexGatePacket;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
-public class VortexServer implements ServerLoader, VortexNodeParent {
+public class VortexServer implements ServerLoader, VortexServerNodeOwner {
 
     // Force init default node types
     public static final VortexNodeType DEFAULT_MASTER_NODE = VortexNodeType.from("vortex-master", VortexDefaultMasterNode::new);
@@ -107,10 +107,12 @@ public class VortexServer implements ServerLoader, VortexNodeParent {
         }
     }
 
+    @Override
     public VortexNode getVortexNode(InetSocketAddress address) {
         return this.vortexNodes.get(address);
     }
 
+    @Override
     public VortexNode getVortexNode(String name) {
         for (VortexNode vortexNode : this.vortexNodes.values()) {
             if (vortexNode.getName().equals(name)) {

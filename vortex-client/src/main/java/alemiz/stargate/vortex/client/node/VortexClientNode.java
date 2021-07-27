@@ -21,7 +21,7 @@ import alemiz.stargate.vortex.client.VortexClient;
 import alemiz.stargate.vortex.client.data.VortexClientSettings;
 import alemiz.stargate.vortex.common.node.ClientSideNode;
 import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeParent;
+import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
 import io.netty.channel.Channel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -35,7 +35,7 @@ public class VortexClientNode extends VortexNode implements ClientSideNode {
 
     private final List<String> masterNodes = Collections.synchronizedList(new ObjectArrayList<>());
 
-    public VortexClientNode(StarGateSession session, VortexNodeParent vortexParent) {
+    public VortexClientNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 

@@ -19,17 +19,14 @@ import alemiz.stargate.StarGateSession;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.vortex.VortexServer;
 import alemiz.stargate.vortex.common.node.VortexMasterNode;
-import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeParent;
+import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
-
-import java.util.Map;
 
 import static alemiz.stargate.vortex.VortexServer.DEFAULT_MASTER_NODE;
 
 public class VortexDefaultMasterNode extends VortexMasterNode {
 
-    public VortexDefaultMasterNode(StarGateSession session, VortexNodeParent vortexParent) {
+    public VortexDefaultMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 

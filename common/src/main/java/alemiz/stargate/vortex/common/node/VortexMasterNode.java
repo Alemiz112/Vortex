@@ -27,7 +27,7 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
 
     private final Map<String, VortexNode> childNodes = new ConcurrentHashMap<>();
 
-    public VortexMasterNode(StarGateSession session, VortexNodeParent vortexParent) {
+    public VortexMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 
@@ -67,5 +67,10 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
 
     public VortexNode getChildNode(String name) {
         return this.childNodes.get(name);
+    }
+
+    @Override
+    public VortexServerNodeOwner getVortexParent() {
+        return (VortexServerNodeOwner) super.getVortexParent();
     }
 }
