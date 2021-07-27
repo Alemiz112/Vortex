@@ -30,8 +30,8 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
     private String primaryMasterNode;
     private final Map<String, VortexMasterNode> masterNodes = new ConcurrentHashMap<>();
 
-    public VortexChildNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
-        super(vortexType, session, vortexParent);
+    public VortexChildNode(StarGateSession session, VortexNodeParent vortexParent) {
+        super(session, vortexParent);
     }
 
     @Override

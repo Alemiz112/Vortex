@@ -29,11 +29,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static alemiz.stargate.vortex.VortexServer.DEFAULT_CHILD_NODE;
+
 @Log4j2
 public class VortexDefaultNode extends VortexChildNode {
 
-    public VortexDefaultNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
-        super(vortexType, session, vortexParent);
+    public VortexDefaultNode(StarGateSession session, VortexNodeParent vortexParent) {
+        super(session, vortexParent);
     }
 
     @Override
@@ -56,6 +58,11 @@ public class VortexDefaultNode extends VortexChildNode {
     @Override
     public VortexServer getVortexParent() {
         return (VortexServer) super.getVortexParent();
+    }
+
+    @Override
+    public VortexNodeType getVortexType() {
+        return DEFAULT_CHILD_NODE;
     }
 
     @Override

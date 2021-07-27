@@ -29,12 +29,14 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static alemiz.stargate.vortex.client.VortexClient.DEFAULT_CHILD_NODE;
+
 public class VortexClientNode extends VortexNode implements ClientSideNode {
 
     private final List<String> masterNodes = Collections.synchronizedList(new ObjectArrayList<>());
 
-    public VortexClientNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
-        super(vortexType, session, vortexParent);
+    public VortexClientNode(StarGateSession session, VortexNodeParent vortexParent) {
+        super(session, vortexParent);
     }
 
     @Override
@@ -48,6 +50,11 @@ public class VortexClientNode extends VortexNode implements ClientSideNode {
     @Override
     public VortexClient getVortexParent() {
         return (VortexClient) super.getVortexParent();
+    }
+
+    @Override
+    public VortexNodeType getVortexType() {
+        return DEFAULT_CHILD_NODE;
     }
 
     @Override

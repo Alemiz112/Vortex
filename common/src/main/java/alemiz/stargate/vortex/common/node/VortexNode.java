@@ -42,7 +42,6 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
     public static final int PING_INTERVAL = 50;
 
     protected final VortexNodeParent vortexParent;
-    protected final VortexNodeType vortexType;
     protected final StarGateSession session;
 
     protected VortexPacketListener vortexPacketListener;
@@ -53,8 +52,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     private volatile boolean closed = false;
 
-    public VortexNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
-        this.vortexType = vortexType;
+    public VortexNode(StarGateSession session, VortexNodeParent vortexParent) {
         this.session = session;
         this.vortexParent = vortexParent;
     }
@@ -183,9 +181,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         return this.session.getAddress();
     }
 
-    public VortexNodeType getVortexType() {
-        return this.vortexType;
-    }
+    public abstract VortexNodeType getVortexType();
 
     public VortexNodeParent getVortexParent() {
         return this.vortexParent;

@@ -79,7 +79,7 @@ public class VortexServer implements ServerLoader, VortexNodeParent {
 
     public VortexNode createNewNode(String typeName, ServerSession session) {
         VortexNodeType vortexType = VortexNodeType.fromString(typeName);
-        VortexNode node = vortexType.getFactory().newInstance(vortexType, session, this);
+        VortexNode node = vortexType.getFactory().newInstance(session, this);
         node.initialize(session.getChannel());
 
         VortexNode oldNode = this.vortexNodes.remove(session.getAddress());

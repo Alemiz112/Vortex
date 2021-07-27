@@ -25,15 +25,22 @@ import alemiz.stargate.vortex.common.node.VortexNodeType;
 
 import java.util.Map;
 
+import static alemiz.stargate.vortex.VortexServer.DEFAULT_MASTER_NODE;
+
 public class VortexDefaultMasterNode extends VortexMasterNode {
 
-    public VortexDefaultMasterNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
-        super(vortexType, session, vortexParent);
+    public VortexDefaultMasterNode(StarGateSession session, VortexNodeParent vortexParent) {
+        super(session, vortexParent);
     }
 
     @Override
     public VortexServer getVortexParent() {
         return (VortexServer) super.getVortexParent();
+    }
+
+    @Override
+    public VortexNodeType getVortexType() {
+        return DEFAULT_MASTER_NODE;
     }
 
     @Override

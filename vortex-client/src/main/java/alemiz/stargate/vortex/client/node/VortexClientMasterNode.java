@@ -31,11 +31,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static alemiz.stargate.vortex.client.VortexClient.DEFAULT_MASTER_NODE;
+
 public class VortexClientMasterNode extends VortexNode implements ClientSideNode {
     private final Map<String, ChildNodeData> childDataMap = new ConcurrentHashMap<>();
 
-    public VortexClientMasterNode(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent) {
-        super(vortexType, session, vortexParent);
+    public VortexClientMasterNode(StarGateSession session, VortexNodeParent vortexParent) {
+        super(session, vortexParent);
     }
 
     @Override
@@ -70,6 +72,11 @@ public class VortexClientMasterNode extends VortexNode implements ClientSideNode
     @Override
     public VortexClient getVortexParent() {
         return (VortexClient) super.getVortexParent();
+    }
+
+    @Override
+    public VortexNodeType getVortexType() {
+        return DEFAULT_MASTER_NODE;
     }
 
     @Override

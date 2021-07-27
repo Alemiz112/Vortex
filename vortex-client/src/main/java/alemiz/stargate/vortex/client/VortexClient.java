@@ -37,6 +37,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class VortexClient implements ServerLoader, VortexNodeParent {
 
+    // Force init default node types
     public static VortexNodeType DEFAULT_MASTER_NODE = VortexNodeType.from("vortex-master", VortexClientMasterNode::new);
     public static VortexNodeType DEFAULT_CHILD_NODE = VortexNodeType.from("vortex-node", VortexClientNode::new);
 

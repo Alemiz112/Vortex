@@ -38,7 +38,7 @@ public class StarGateListener extends StarGateClientListener {
         VortexClientSettings settings = this.loader.getSettings();
         VortexNodeType vortexType = VortexNodeType.fromString(settings.getVortexType());
 
-        VortexNode vortexNode = vortexType.getFactory().newInstance(vortexType, session, this.loader);
+        VortexNode vortexNode = vortexType.getFactory().newInstance(session, this.loader);
         this.loader.onNodeCreated(vortexNode, session);
     }
 

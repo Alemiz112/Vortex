@@ -19,5 +19,6 @@ import alemiz.stargate.StarGateSession;
 import alemiz.stargate.vortex.common.data.VortexSettings;
 
 public interface VortexNodeFactory {
-    VortexNode newInstance(VortexNodeType vortexType, StarGateSession session, VortexNodeParent vortexParent);
+
+    VortexNode newInstance(StarGateSession session, VortexNodeParent vortexParent);
 }
