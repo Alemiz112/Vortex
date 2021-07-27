@@ -120,7 +120,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         if (this.isClosed()) {
             return;
         }
-        log.info("Vortex node " + this.getName() + " has disconnected!");
+        log.info("Vortex node " + this.getNodeName() + " has disconnected!");
         this.deinitialize();
     }
 
@@ -154,7 +154,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     public void disconnect(String reason) {
         if (!this.isClosed()) {
-            log.info("Disconnecting Vortex node " + this.getName() + " due to: " + reason);
+            log.info("Disconnecting Vortex node " + this.getNodeName() + " due to: " + reason);
         }
         this.session.disconnect(reason);
         this.deinitialize();
@@ -171,7 +171,9 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         return this.closed;
     }
 
-    public abstract String getName();
+    public String getNodeName() {
+        return this.session.getSessionName();
+    }
 
     public long getLatency() {
         return this.latency;

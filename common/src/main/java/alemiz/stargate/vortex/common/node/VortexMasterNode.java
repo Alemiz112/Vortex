@@ -48,19 +48,19 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
     }
 
     public void registerChildNode(VortexNode node) {
-        this.childNodes.put(node.getName(), node);
+        this.childNodes.put(node.getNodeName(), node);
 
         VortexChildInfoPacket packet = new VortexChildInfoPacket();
-        packet.setNodeName(node.getName());
+        packet.setNodeName(node.getNodeName());
         packet.setAction(VortexChildInfoPacket.Action.ADD);
         this.sendPacket(packet);
     }
 
     public void unregisterChildNode(VortexNode node) {
-        this.childNodes.remove(node.getName());
+        this.childNodes.remove(node.getNodeName());
 
         VortexChildInfoPacket packet = new VortexChildInfoPacket();
-        packet.setNodeName(node.getName());
+        packet.setNodeName(node.getNodeName());
         packet.setAction(VortexChildInfoPacket.Action.REMOVE);
         this.sendPacket(packet);
     }

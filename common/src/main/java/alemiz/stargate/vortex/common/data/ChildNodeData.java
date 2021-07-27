@@ -13,13 +13,16 @@
  * limitations under the License
  */
 
-package alemiz.stargate.vortex.client.data;
+package alemiz.stargate.vortex.common.data;
 
 import lombok.Data;
 
 @Data
 public class ChildNodeData {
-    private final String nodeName;
+    private String nodeName;
+
+    public ChildNodeData() {
+    }
 
     public ChildNodeData(String nodeName) {
         this.nodeName = nodeName;

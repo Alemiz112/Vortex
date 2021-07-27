@@ -13,30 +13,24 @@
  * limitations under the License
  */
 
-package alemiz.stargate.vortex.node;
+package alemiz.stargate.vortex.minecraft.node;
 
 import alemiz.stargate.StarGateSession;
-import alemiz.stargate.server.ServerSession;
-import alemiz.stargate.vortex.VortexServer;
-import alemiz.stargate.vortex.common.node.VortexMasterNode;
+import alemiz.stargate.vortex.common.node.ClientSideNode;
+import alemiz.stargate.vortex.common.node.VortexNode;
 import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
 
-import static alemiz.stargate.vortex.VortexServer.DEFAULT_MASTER_NODE;
+import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_CLIENT_CHILD;
 
-public class VortexDefaultMasterNode extends VortexMasterNode {
+public class MinecraftClientChildNode extends VortexNode implements ClientSideNode {
 
-    public VortexDefaultMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
+    public MinecraftClientChildNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 
     @Override
-    public VortexServer getVortexParent() {
-        return (VortexServer) super.getVortexParent();
-    }
-
-    @Override
     public VortexNodeType getVortexType() {
-        return DEFAULT_MASTER_NODE;
+        return MINECRAFT_CLIENT_CHILD;
     }
 }

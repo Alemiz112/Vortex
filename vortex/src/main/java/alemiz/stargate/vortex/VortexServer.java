@@ -115,7 +115,7 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
     @Override
     public VortexNode getVortexNode(String name) {
         for (VortexNode vortexNode : this.vortexNodes.values()) {
-            if (vortexNode.getName().equals(name)) {
+            if (vortexNode.getNodeName().equals(name)) {
                 return vortexNode;
             }
         }

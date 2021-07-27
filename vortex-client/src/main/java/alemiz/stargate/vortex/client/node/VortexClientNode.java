@@ -56,9 +56,4 @@ public class VortexClientNode extends VortexNode implements ClientSideNode {
     public VortexNodeType getVortexType() {
         return DEFAULT_CHILD_NODE;
     }
-
-    @Override
-    public String getName() {
-        return ((ClientSession) this.session).getClient().getClientName();
-    }
 }

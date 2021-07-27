@@ -40,9 +40,4 @@ public class VortexDefaultNode extends VortexChildNode {
     public VortexNodeType getVortexType() {
         return DEFAULT_CHILD_NODE;
     }
-
-    @Override
-    public String getName() {
-        return ((ServerSession) this.session).getClientName();
-    }
 }

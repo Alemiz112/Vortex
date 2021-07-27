@@ -13,30 +13,30 @@
  * limitations under the License
  */
 
-package alemiz.stargate.vortex.node;
+package alemiz.stargate.vortex.minecraft.node;
 
 import alemiz.stargate.StarGateSession;
-import alemiz.stargate.server.ServerSession;
-import alemiz.stargate.vortex.VortexServer;
-import alemiz.stargate.vortex.common.node.VortexMasterNode;
+import alemiz.stargate.vortex.common.node.VortexChildNode;
 import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
+import alemiz.stargate.vortex.minecraft.protocol.stargate.StarGateChildHandler;
+import io.netty.channel.Channel;
 
-import static alemiz.stargate.vortex.VortexServer.DEFAULT_MASTER_NODE;
+import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_SERVER_CHILD;
 
-public class VortexDefaultMasterNode extends VortexMasterNode {
+public class MinecraftServerChildNode extends VortexChildNode {
 
-    public VortexDefaultMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
+    public MinecraftServerChildNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 
     @Override
-    public VortexServer getVortexParent() {
-        return (VortexServer) super.getVortexParent();
+    protected void initialize0(Channel channel) {
+        this.session.addCustomHandler(new StarGateChildHandler(this, this.session));
     }
 
     @Override
     public VortexNodeType getVortexType() {
-        return DEFAULT_MASTER_NODE;
+        return MINECRAFT_SERVER_CHILD;
     }
 }

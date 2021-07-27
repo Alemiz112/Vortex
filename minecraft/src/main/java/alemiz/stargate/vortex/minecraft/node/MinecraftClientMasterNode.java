@@ -13,10 +13,9 @@
  * limitations under the License
  */
 
-package alemiz.stargate.vortex.client.node;
+package alemiz.stargate.vortex.minecraft.node;
 
 import alemiz.stargate.StarGateSession;
-import alemiz.stargate.vortex.client.VortexClient;
 import alemiz.stargate.vortex.common.data.ChildNodeData;
 import alemiz.stargate.vortex.common.node.ClientSideNode;
 import alemiz.stargate.vortex.common.node.VortexNode;
@@ -30,12 +29,17 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static alemiz.stargate.vortex.client.VortexClient.DEFAULT_MASTER_NODE;
+import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_CLIENT_MASTER;
 
-public class VortexClientMasterNode extends VortexNode implements ClientSideNode {
+/**
+ * During this Minecraft implementation we will asume that Master nodes will refer to transfer proxies and
+ * that Child nodes will be the actual downstream servers known to the proxy.
+ */
+public class MinecraftClientMasterNode extends VortexNode implements ClientSideNode {
+
     private final Map<String, ChildNodeData> childDataMap = new ConcurrentHashMap<>();
 
-    public VortexClientMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
+    public MinecraftClientMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 
@@ -49,13 +53,14 @@ public class VortexClientMasterNode extends VortexNode implements ClientSideNode
 
     private boolean handleChildInfo(VortexChildInfoPacket packet) {
         String nodeName = packet.getNodeName();
-        switch (packet.getAction()) {
-            case ADD:
-                this.childDataMap.putIfAbsent(nodeName, new ChildNodeData(nodeName));
-                break;
-            case REMOVE:
-                this.childDataMap.remove(nodeName);
-                break;
+        if (packet.getAction() == VortexChildInfoPacket.Action.REMOVE) {
+            this.childDataMap.remove(nodeName);
+            return true;
+        }
+
+        if (!this.childDataMap.containsKey(nodeName)) {
+            ChildNodeData data = new ChildNodeData(nodeName);
+            this.childDataMap.put(nodeName, data);
         }
         return true;
     }
@@ -69,12 +74,7 @@ public class VortexClientMasterNode extends VortexNode implements ClientSideNode
     }
 
     @Override
-    public VortexClient getVortexParent() {
-        return (VortexClient) super.getVortexParent();
-    }
-
-    @Override
     public VortexNodeType getVortexType() {
-        return DEFAULT_MASTER_NODE;
+        return MINECRAFT_CLIENT_MASTER;
     }
 }
