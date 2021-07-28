@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 @Log4j2
-public class VortexLogger implements StarGateLogger {
+public class StarGateLoggerAppender implements StarGateLogger {
 
 
     @Override
@@ -34,7 +34,7 @@ public class VortexLogger implements StarGateLogger {
 
     @Override
     public void info(String message) {
-        log.info(message);
+        this.debug(message);
     }
 
     @Override

@@ -27,7 +27,7 @@ import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePack
 import alemiz.stargate.vortex.common.protocol.stargate.VortexGatePacket;
 import alemiz.stargate.vortex.common.node.VortexNode;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
-import alemiz.stargate.vortex.common.VortexLogger;
+import alemiz.stargate.vortex.common.StarGateLoggerAppender;
 import alemiz.stargate.vortex.node.VortexDefaultMasterNode;
 import alemiz.stargate.vortex.node.VortexDefaultNode;
 import alemiz.stargate.vortex.stargate.StarGateListener;
@@ -44,7 +44,7 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
     public static final VortexNodeType DEFAULT_MASTER_NODE = VortexNodeType.from("vortex-master", VortexDefaultMasterNode::new);
     public static final VortexNodeType DEFAULT_CHILD_NODE = VortexNodeType.from("vortex-node", VortexDefaultNode::new);
 
-    private final StarGateLogger logger = new VortexLogger();
+    private final StarGateLogger logger = new StarGateLoggerAppender();
     private final VortexSettings settings;
     private final StarGateServer server;
 
@@ -62,6 +62,7 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
     }
 
     public void start() {
+        log.info("Starting Vortex server powered by StarGate protocol");
         this.server.start();
     }
 

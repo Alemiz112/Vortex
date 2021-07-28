@@ -25,7 +25,7 @@ import alemiz.stargate.vortex.client.data.VortexClientSettings;
 import alemiz.stargate.vortex.client.node.VortexClientMasterNode;
 import alemiz.stargate.vortex.client.node.VortexClientNode;
 import alemiz.stargate.vortex.client.stargate.StarGateListener;
-import alemiz.stargate.vortex.common.VortexLogger;
+import alemiz.stargate.vortex.common.StarGateLoggerAppender;
 import alemiz.stargate.vortex.common.node.VortexNode;
 import alemiz.stargate.vortex.common.node.VortexNodeOwner;
 import alemiz.stargate.vortex.common.node.VortexNodeType;
@@ -41,7 +41,7 @@ public class VortexClient implements ServerLoader, VortexNodeOwner {
     public static VortexNodeType DEFAULT_MASTER_NODE = VortexNodeType.from("vortex-master", VortexClientMasterNode::new);
     public static VortexNodeType DEFAULT_CHILD_NODE = VortexNodeType.from("vortex-node", VortexClientNode::new);
 
-    private final StarGateLogger logger = new VortexLogger();
+    private final StarGateLogger logger = new StarGateLoggerAppender();
     private final VortexClientSettings settings;
     private final StarGateClient client;
 
