@@ -20,6 +20,7 @@ import alemiz.stargate.vortex.common.protocol.VortexPacketListener;
 import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 import alemiz.stargate.vortex.minecraft.Minecraft;
+import alemiz.stargate.vortex.minecraft.protocol.VortexMinecraftPacketListener;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -50,6 +51,14 @@ public class PlayerTransferPacket extends VortexMessagePacket {
     public void decode(ByteBuf buffer) {
         this.playerIdentifier = PacketHelper.readString(buffer);
         this.targetServer = PacketHelper.readString(buffer);
+    }
+
+    @Override
+    public boolean handle(VortexPacketListener listener) {
+        if (listener instanceof VortexMinecraftPacketListener) {
+            return ((VortexMinecraftPacketListener) listener).handlePlayerTransfer(this);
+        }
+        return super.handle(listener);
     }
 
     @Override

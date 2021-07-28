@@ -148,4 +148,8 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
     public StarGateLogger getStarGateLogger() {
         return this.logger;
     }
+
+    public boolean isClosed() {
+        return this.server.isShutdown();
+    }
 }

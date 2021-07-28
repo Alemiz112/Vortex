@@ -64,7 +64,7 @@ public class VortexClient implements ServerLoader, VortexNodeOwner {
     }
 
     public void shutdown() {
-        if (this.client.isConnected()) {
+        if (!this.client.isConnected()) {
             throw new IllegalStateException("Client is not connected");
         }
         this.client.shutdown();
@@ -124,6 +124,14 @@ public class VortexClient implements ServerLoader, VortexNodeOwner {
 
     public void setPacketPool(VortexPacketPool packetPool) {
         this.packetPool = packetPool;
+    }
+
+    public boolean isClosed() {
+        return !this.client.isConnected();
+    }
+
+    public boolean isConnected() {
+        return this.vortexNode != null && !this.vortexNode.isClosed();
     }
 
     @Override

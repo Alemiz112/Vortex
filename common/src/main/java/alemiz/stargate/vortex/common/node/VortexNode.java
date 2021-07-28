@@ -21,6 +21,7 @@ import alemiz.stargate.utils.StarGateLogger;
 import alemiz.stargate.vortex.common.data.VortexSettings;
 import alemiz.stargate.vortex.common.pipeline.VortexPacketDecoder;
 import alemiz.stargate.vortex.common.pipeline.VortexPacketEncoder;
+import alemiz.stargate.vortex.common.pipeline.VortexPipelineTail;
 import alemiz.stargate.vortex.common.protocol.packet.VortexLatencyPacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 import alemiz.stargate.vortex.common.protocol.VortexPacketListener;
@@ -70,6 +71,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         pipeline.addBefore(UnhandledPacketConsumer.NAME, VortexPacketEncoder.NAME,
                 new VortexPacketEncoder(this.session, settings.getCompression(), settings.getCompressionLevel()));
         pipeline.addAfter(VortexPacketDecoder.NAME, VortexNode.NAME, this);
+        pipeline.addLast(VortexPipelineTail.NAME, new VortexPipelineTail(this));
 
         this.pingFuture = channel.eventLoop().scheduleAtFixedRate(this::sendPing, 200, PING_INTERVAL, TimeUnit.MILLISECONDS);
         this.initialize0(channel);
@@ -177,6 +179,14 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     public long getLatency() {
         return this.latency;
+    }
+
+    public VortexPacketListener getVortexPacketListener() {
+        return this.vortexPacketListener;
+    }
+
+    public void setVortexPacketListener(VortexPacketListener vortexPacketListener) {
+        this.vortexPacketListener = vortexPacketListener;
     }
 
     public InetSocketAddress getAddress() {
