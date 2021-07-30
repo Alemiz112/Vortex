@@ -13,12 +13,21 @@
  * limitations under the License
  */
 
-package alemiz.stargate.vortex;
-
-import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeListener;
+package alemiz.stargate.vortex.common.node;
 
 import java.net.InetSocketAddress;
 
-public interface VortexListener extends VortexNodeListener {
+public interface VortexNodeListener {
+
+    default void onNodeCreated(InetSocketAddress address, VortexNode node) {
+    }
+
+    default void onNodeDisconnected(VortexNode node) {
+    }
+
+    default void onChildNodeRegsiter(VortexNode childNode, VortexMasterNode masterNode) {
+    }
+
+    default void onChildNodeUnregister(VortexNode childNode, VortexMasterNode masterNode) {
+    }
 }

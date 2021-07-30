@@ -21,6 +21,7 @@ import alemiz.stargate.server.StarGateServer;
 import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
 import alemiz.stargate.vortex.common.data.VortexSettings;
+import alemiz.stargate.vortex.common.node.VortexNodeListener;
 import alemiz.stargate.vortex.common.node.VortexServerNodeOwner;
 import alemiz.stargate.vortex.common.protocol.VortexPacketPool;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePacket;
@@ -124,7 +125,12 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
     }
 
     public VortexListener getListener() {
-        return listener;
+        return this.listener;
+    }
+
+    @Override
+    public VortexNodeListener getNodeListener() {
+        return this.listener;
     }
 
     public void setListener(VortexListener listener) {

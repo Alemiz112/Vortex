@@ -22,4 +22,6 @@ public interface VortexServerNodeOwner extends VortexNodeOwner {
     VortexNode getVortexNode(String nodeName);
 
     VortexNode getVortexNode(InetSocketAddress address);
+
+    VortexNodeListener getNodeListener();
 }

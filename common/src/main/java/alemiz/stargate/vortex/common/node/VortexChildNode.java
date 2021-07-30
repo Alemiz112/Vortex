@@ -89,9 +89,8 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
         if (this.masterNodes.containsKey(masterNode.getNodeName())) {
             return false;
         }
-        masterNode.registerChildNode(this);
-
         this.masterNodes.put(masterNode.getNodeName(), masterNode);
+        masterNode.registerChildNode(this);
         return true;
     }
 
