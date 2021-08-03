@@ -79,7 +79,7 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
     }
 
     public boolean registerToMasterNode(VortexMasterNode masterNode) {
-        if (this.masterNodes.containsKey(masterNode.getNodeName())) {
+        if (this.masterNodes.containsKey(masterNode.getNodeName()) || masterNode.isClosed()) {
             return false;
         }
         this.masterNodes.put(masterNode.getNodeName(), masterNode);

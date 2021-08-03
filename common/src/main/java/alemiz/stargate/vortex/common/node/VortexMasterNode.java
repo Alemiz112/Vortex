@@ -32,6 +32,15 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
     }
 
     @Override
+    protected void deinitialize0() {
+        for (VortexNode node : this.childNodes.values()) {
+            if (node instanceof VortexChildNode) {
+                ((VortexChildNode) node).unregisterFromMasterNode(this);
+            }
+        }
+    }
+
+    @Override
     protected boolean onMessagePacket(VortexMessagePacket packet) {
         // Broadcast any message recived from master to all child nodes
         for (VortexNode vortexNode : this.childNodes.values()) {
@@ -62,10 +71,13 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
             listener.onChildNodeUnregister(node, this);
         }
 
-        VortexChildInfoPacket packet = new VortexChildInfoPacket();
-        packet.setNodeName(node.getNodeName());
-        packet.setAction(VortexChildInfoPacket.Action.REMOVE);
-        this.sendPacket(packet);
+        // Do not nottify client side when channel is already closed
+        if (!this.isClosed()) {
+            VortexChildInfoPacket packet = new VortexChildInfoPacket();
+            packet.setNodeName(node.getNodeName());
+            packet.setAction(VortexChildInfoPacket.Action.REMOVE);
+            this.sendPacket(packet);
+        }
     }
 
     public VortexNode getChildNode(String name) {
