@@ -16,10 +16,8 @@
 package alemiz.stargate.vortex.minecraft.node;
 
 import alemiz.stargate.StarGateSession;
-import alemiz.stargate.vortex.common.node.VortexMasterNode;
-import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeOwner;
-import alemiz.stargate.vortex.common.node.VortexNodeType;
+import alemiz.stargate.vortex.common.node.*;
+import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 
 import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_SERVER_MASTER;
 
@@ -31,6 +29,23 @@ public class MinecraftServerMasterNode extends VortexMasterNode {
 
     public MinecraftServerMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
+    }
+
+    @Override
+    protected boolean onMessagePacket(VortexMessagePacket packet) {
+        if (packet.getTargetNode().isEmpty()) {
+            for (VortexNode node : this.childNodes.values()) {
+                node.sendPacket(packet);
+            }
+            return true;
+        }
+
+        VortexNode node = this.getChildNode(packet.getTargetNode());
+        if (node == null || node.isClosed()) {
+            return false;
+        }
+        node.sendPacket(packet);
+        return true;
     }
 
     @Override

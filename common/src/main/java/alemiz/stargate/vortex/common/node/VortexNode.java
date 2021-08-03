@@ -23,6 +23,7 @@ import alemiz.stargate.vortex.common.pipeline.VortexPacketDecoder;
 import alemiz.stargate.vortex.common.pipeline.VortexPacketEncoder;
 import alemiz.stargate.vortex.common.pipeline.VortexPipelineTail;
 import alemiz.stargate.vortex.common.protocol.packet.VortexLatencyPacket;
+import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 import alemiz.stargate.vortex.common.protocol.VortexPacketListener;
 import io.netty.channel.Channel;
@@ -110,13 +111,18 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
     }
 
     protected boolean handleInternal(VortexPacket packet) {
+        if (packet instanceof VortexMessagePacket && this.onMessagePacket((VortexMessagePacket) packet)) {
+            return true;
+        }
+
         if (packet instanceof VortexLatencyPacket) {
             this.onPing((VortexLatencyPacket) packet);
             return true;
         }
-
         return false;
     }
+
+    protected abstract boolean onMessagePacket(VortexMessagePacket packet);
 
     public void onDisconnected() {
         if (this.isClosed()) {

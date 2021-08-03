@@ -25,21 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class VortexMasterNode extends VortexNode implements ServerSideNode {
 
-    private final Map<String, VortexNode> childNodes = new ConcurrentHashMap<>();
+    protected final Map<String, VortexNode> childNodes = new ConcurrentHashMap<>();
 
     public VortexMasterNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
     }
 
     @Override
-    protected boolean handleInternal(VortexPacket packet) {
-        if (packet instanceof VortexMessagePacket && this.onMessagePacket((VortexMessagePacket) packet)) {
-            return true;
-        }
-        return super.handleInternal(packet);
-    }
-
-    private boolean onMessagePacket(VortexMessagePacket packet) {
+    protected boolean onMessagePacket(VortexMessagePacket packet) {
         // Broadcast any message recived from master to all child nodes
         for (VortexNode vortexNode : this.childNodes.values()) {
             vortexNode.sendPacket(packet);

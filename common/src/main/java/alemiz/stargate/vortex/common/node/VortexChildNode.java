@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class VortexChildNode extends VortexNode implements ServerSideNode {
 
     private String primaryMasterNode;
-    private final Map<String, VortexMasterNode> masterNodes = new ConcurrentHashMap<>();
+    protected final Map<String, VortexMasterNode> masterNodes = new ConcurrentHashMap<>();
 
     public VortexChildNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);
@@ -61,14 +61,7 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
     }
 
     @Override
-    protected boolean handleInternal(VortexPacket packet) {
-        if (packet instanceof VortexMessagePacket && this.onMessagePacket((VortexMessagePacket) packet)) {
-            return true;
-        }
-        return super.handleInternal(packet);
-    }
-
-    private boolean onMessagePacket(VortexMessagePacket packet) {
+    protected boolean onMessagePacket(VortexMessagePacket packet) {
         if (packet.getTargetNode().isEmpty()) {
             for (VortexMasterNode masterNode : this.masterNodes.values()) {
                 masterNode.sendPacket(packet);
