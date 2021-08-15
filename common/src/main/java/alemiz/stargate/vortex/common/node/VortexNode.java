@@ -26,16 +26,22 @@ import alemiz.stargate.vortex.common.protocol.packet.VortexLatencyPacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 import alemiz.stargate.vortex.common.protocol.VortexPacketListener;
+import alemiz.stargate.vortex.common.protocol.packet.VortexResponse;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
+import io.netty.util.concurrent.DefaultPromise;
+import io.netty.util.concurrent.Promise;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
 public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacket> {
@@ -51,6 +57,9 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
     private ScheduledFuture<?> pingFuture;
     private long landPingTime;
     private long latency;
+
+    private final AtomicInteger responseIdAllocator = new AtomicInteger(0);
+    private final Int2ObjectMap<Promise<VortexResponse>> pendingResponses = new Int2ObjectOpenHashMap<>();
 
     private volatile boolean closed = false;
 
@@ -101,12 +110,24 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
             return;
         }
 
+        // Ensure that we don't cache unhandled promises
+        Promise<VortexResponse> responsePromise = null;
+        if (packet instanceof VortexResponse) {
+            responsePromise = this.pendingResponses.remove(((VortexResponse) packet).getResponseId());
+        }
+
         if (this.vortexPacketListener != null && packet.handle(this.vortexPacketListener)) {
             return;
         }
 
-        if (!this.handleInternal(packet)) {
+        if (this.handleInternal(packet)) {
+            return;
+        }
+
+        if (responsePromise == null) {
             ctx.fireChannelRead(ReferenceCountUtil.retain(packet));
+        } else {
+            responsePromise.setSuccess((VortexResponse) packet);
         }
     }
 
@@ -122,7 +143,10 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         return false;
     }
 
-    protected abstract boolean onMessagePacket(VortexMessagePacket packet);
+    protected boolean onMessagePacket(VortexMessagePacket packet) {
+        // Implement if required
+        return false;
+    }
 
     public void onDisconnected() {
         if (this.isClosed()) {
@@ -154,6 +178,20 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         this.sendPacket(packet);
     }
 
+    public Promise<VortexResponse> sendResponsePacket(VortexResponse packet) {
+        if (this.closed || !this.session.getChannel().isActive()) {
+            return null;
+        }
+
+        int id = this.responseIdAllocator.getAndIncrement();
+        packet.setResponseId(id);
+
+        Promise<VortexResponse> promise = new DefaultPromise<>(this.session.getChannel().eventLoop());
+        this.pendingResponses.put(id, promise);
+        this.sendPacket(packet);
+        return promise;
+    }
+
     public void sendPacket(VortexPacket packet) {
         if (!this.closed && this.session.getChannel().isActive()) {
             this.session.getChannel().writeAndFlush(packet);
@@ -173,6 +211,10 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
             this.session.close();
         }
         this.deinitialize();
+    }
+
+    public Promise<VortexResponse> getResponsePromise(int responseId) {
+        return this.pendingResponses.get(responseId);
     }
 
     public boolean isClosed() {

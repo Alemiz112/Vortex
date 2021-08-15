@@ -40,7 +40,7 @@ public class VortexPacketPool {
     }
 
     public <T extends VortexPacket> VortexPacket constructPacket(Class<T> packetClass) {
-        if (!this.packetFactoryMap.containsKey(packetClass)) {
+        if (!this.packetIdMap.containsKey(packetClass)) {
             throw new IllegalStateException("Packet " + packetClass.getSimpleName() + " is not registered!");
         }
 
@@ -65,7 +65,7 @@ public class VortexPacketPool {
             throw new IllegalArgumentException("Packet ID can not be negative!");
         }
 
-        if (this.packetFactoryMap.containsKey(packetId) || this.packetIdMap.containsKey(packetId)) {
+        if (this.packetFactoryMap.containsKey(packetId) || this.packetIdMap.containsKey(packetClass)) {
             throw new IllegalStateException("Packet " + packetClass.getSimpleName() + " is already registered!");
         }
 
