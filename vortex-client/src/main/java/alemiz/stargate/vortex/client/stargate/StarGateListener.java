@@ -35,17 +35,13 @@ public class StarGateListener extends StarGateClientListener {
 
     @Override
     public void onSessionCreated(InetSocketAddress address, ClientSession session) {
-        VortexClientSettings settings = this.loader.getSettings();
-        VortexNodeType vortexType = VortexNodeType.fromString(settings.getVortexType());
-
-        VortexNode vortexNode = vortexType.getFactory().newInstance(session, this.loader);
-        this.loader.onNodeCreated(vortexNode, session);
+        // unused
     }
 
     @Override
     public void onSessionAuthenticated(ClientSession session) {
         VortexClientSettings settings = this.loader.getSettings();
-        VortexNode vortexNode = this.loader.getVortexNode();
+        VortexNodeType vortexType = VortexNodeType.fromString(settings.getVortexType());
 
         VortexClientHandshakePacket packet = new VortexClientHandshakePacket();
         packet.setVortexType(settings.getVortexType());
@@ -54,6 +50,9 @@ public class StarGateListener extends StarGateClientListener {
             packet.getMasterNodes().addAll(settings.getMasterNodes());
         }
         session.sendPacket(packet);
+
+        VortexNode vortexNode = vortexType.getFactory().newInstance(session, this.loader);
+        this.loader.onNodeCreated(vortexNode, session);
     }
 
     @Override
