@@ -27,10 +27,7 @@ import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 import alemiz.stargate.vortex.common.protocol.VortexPacketListener;
 import alemiz.stargate.vortex.common.protocol.packet.VortexResponse;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Promise;
@@ -194,7 +191,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     public void sendPacket(VortexPacket packet) {
         if (!this.closed && this.session.getChannel().isActive()) {
-            this.session.getChannel().writeAndFlush(packet);
+            this.session.getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
 
