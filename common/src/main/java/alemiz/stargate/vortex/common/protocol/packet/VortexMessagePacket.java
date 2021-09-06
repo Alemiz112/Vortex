@@ -26,7 +26,7 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = false)
-public abstract class VortexMessagePacket extends VortexPacket {
+public abstract class VortexMessagePacket implements VortexPacket {
 
     /**
      * Name of the master/child node which should rceive the message.

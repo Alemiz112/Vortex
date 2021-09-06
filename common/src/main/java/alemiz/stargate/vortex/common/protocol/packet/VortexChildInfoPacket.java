@@ -26,7 +26,7 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = false)
-public class VortexChildInfoPacket extends VortexPacket {
+public class VortexChildInfoPacket implements VortexPacket {
 
     private String nodeName;
     private Action action;

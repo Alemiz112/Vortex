@@ -26,7 +26,7 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = false)
-public class VortexLatencyPacket extends VortexPacket {
+public class VortexLatencyPacket implements VortexPacket {
 
     private long sendTime;
     private boolean pong;

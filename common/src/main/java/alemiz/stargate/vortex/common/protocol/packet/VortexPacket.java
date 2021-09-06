@@ -21,12 +21,12 @@ import lombok.Data;
 
 import java.util.function.Consumer;
 
-public abstract class VortexPacket {
+public interface VortexPacket {
 
-    public abstract void encodePayload(ByteBuf buffer);
-    public abstract void decodePayload(ByteBuf buffer);
+    public void encodePayload(ByteBuf buffer);
+    public void decodePayload(ByteBuf buffer);
 
-    public abstract boolean handle(VortexPacketListener listener);
+    public boolean handle(VortexPacketListener listener);
 
-    public abstract short getPacketId();
+    public short getPacketId();
 }

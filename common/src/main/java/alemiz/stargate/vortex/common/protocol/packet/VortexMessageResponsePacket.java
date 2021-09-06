@@ -15,9 +15,17 @@
 
 package alemiz.stargate.vortex.common.protocol.packet;
 
-public interface VortexResponse extends VortexPacket {
+public abstract class VortexMessageResponsePacket extends VortexMessagePacket implements VortexResponse {
 
-    long getResponseId();
+    private long responseId;
 
-    void setResponseId(long responseId);
+    @Override
+    public long getResponseId() {
+        return this.responseId;
+    }
+
+    @Override
+    public void setResponseId(long responseId) {
+        this.responseId = responseId;
+    }
 }
