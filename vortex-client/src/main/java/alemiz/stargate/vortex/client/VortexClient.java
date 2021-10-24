@@ -33,6 +33,7 @@ import alemiz.stargate.vortex.common.node.VortexNodeType;
 import alemiz.stargate.vortex.common.protocol.VortexPacketPool;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexClientHandshakePacket;
 import alemiz.stargate.vortex.common.protocol.stargate.VortexGatePacket;
+import io.netty.channel.ChannelFuture;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -60,8 +61,8 @@ public class VortexClient implements ServerLoader, VortexNodeOwner {
         this.registerStarGateCodec(this.client.getProtocolCodec());
     }
 
-    public void start() {
-        this.client.start();
+    public ChannelFuture start() {
+        return this.client.connect();
     }
 
     public void shutdown() {

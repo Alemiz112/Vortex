@@ -23,6 +23,13 @@
         <log4j2.version>2.14.1</log4j2.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>waterdog</id>
+            <url>https://repo.waterdog.dev/artifactory/main</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>central</id>

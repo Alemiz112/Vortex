@@ -32,8 +32,8 @@ import io.netty.channel.*;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Promise;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetSocketAddress;
@@ -56,13 +56,13 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
     protected VortexPacketListener vortexPacketListener;
 
     private ScheduledFuture<?> pingFuture;
-    private ScheduledFuture<?> resposnesFuture;
+    private ScheduledFuture<?> responsesFuture;
 
     private long landPingTime;
     private long latency;
 
     private final AtomicInteger responseIdAllocator = new AtomicInteger(0);
-    private final Int2ObjectMap<ResponseHandle> pendingResponses = new Int2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<ResponseHandle> pendingResponses = new Long2ObjectOpenHashMap<>();
 
     private volatile boolean closed = false;
 
@@ -87,7 +87,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         pipeline.addLast(VortexPipelineTail.NAME, new VortexPipelineTail(this));
 
         this.pingFuture = channel.eventLoop().scheduleAtFixedRate(this::sendPing, 200, PING_INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
-        this.resposnesFuture = channel.eventLoop().scheduleAtFixedRate(this::collectResponses, RESPONSE_TIMEOUT_INTERVAL_SECONDS, RESPONSE_TIMEOUT_INTERVAL_SECONDS, TimeUnit.SECONDS);
+        this.responsesFuture = channel.eventLoop().scheduleAtFixedRate(this::collectResponses, RESPONSE_TIMEOUT_INTERVAL_SECONDS, RESPONSE_TIMEOUT_INTERVAL_SECONDS, TimeUnit.SECONDS);
         this.initialize0(channel);
     }
 
@@ -99,8 +99,9 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         if (this.closed) {
             return;
         }
-        this.closed = closed;
+        this.closed = true;
         this.pingFuture.cancel(false);
+        this.responsesFuture.cancel(false);
         this.deinitialize0();
     }
 

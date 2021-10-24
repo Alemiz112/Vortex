@@ -22,7 +22,7 @@ import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_SERVER_MASTER;
 
 /**
- * During this Minecraft implementation we will asume that Master nodes will refer to transfer proxies and
+ * During this Minecraft implementation we will assume that Master nodes will refer to transfer proxies and
  * that Child nodes will be the actual downstream servers known to the proxy.
  */
 public class MinecraftServerMasterNode extends VortexMasterNode {
