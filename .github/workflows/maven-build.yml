@@ -17,7 +17,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 8
-          distribution: 'adopt'
+          distribution: adopt-hotspot
+          settings-path: ${{ github.workspace }}
 
       - name: Setup maven repo
         uses: s4u/maven-settings-action@v2.6.0
