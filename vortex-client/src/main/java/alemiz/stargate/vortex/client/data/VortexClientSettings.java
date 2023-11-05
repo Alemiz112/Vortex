@@ -15,9 +15,7 @@
 
 package alemiz.stargate.vortex.client.data;
 
-import alemiz.stargate.vortex.common.data.CompressionEnum;
 import alemiz.stargate.vortex.common.data.VortexSettings;
-import lombok.Builder;
 import lombok.Data;
 
 import java.net.InetSocketAddress;
@@ -32,4 +30,5 @@ public class VortexClientSettings extends VortexSettings {
     private String vortexType;
     private String primaryMasterNode = "";
     private List<String> masterNodes;
+    private List<String> subscribedTopics;
 }

@@ -35,7 +35,10 @@ import alemiz.stargate.vortex.stargate.StarGateListener;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
@@ -50,6 +53,7 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
     private final StarGateServer server;
 
     private final Map<InetSocketAddress, VortexNode> vortexNodes = new ConcurrentHashMap<>();
+    private final Map<String, Set<VortexNode>> topics = new ConcurrentHashMap<>();
     private VortexPacketPool packetPool = new VortexPacketPool();
     private VortexListener listener;
 
@@ -79,7 +83,7 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
         codec.registerPacket(VortexPacketPool.VORTEX_CLIENT_HANDSHAKE_PACKET, VortexClientHandshakePacket.class);
     }
 
-    public VortexNode createNewNode(String typeName, ServerSession session) {
+    public VortexNode createNewNode(String typeName, Collection<String> topics, ServerSession session) {
         VortexNodeType vortexType = VortexNodeType.fromString(typeName);
         VortexNode node = vortexType.getFactory().newInstance(session, this);
         node.initialize(session.getChannel());
@@ -90,6 +94,11 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
         }
 
         log.info("New Vortex node successfully created " + session.getAddress());
+
+        for (String topic : topics) {
+            node.subscribe(topic);
+        }
+
         this.vortexNodes.put(session.getAddress(), node);
         if (this.listener != null) {
             this.listener.onNodeCreated(session.getAddress(), node);
@@ -101,6 +110,10 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
         VortexNode vortexNode = this.vortexNodes.remove(session.getAddress());
         if (vortexNode == null) {
             return;
+        }
+
+        for (String topic : vortexNode.getSubscribedTopics()) {
+            vortexNode.unsubscribe(topic);
         }
 
         vortexNode.onDisconnected();
@@ -122,6 +135,30 @@ public class VortexServer implements ServerLoader, VortexServerNodeOwner {
             }
         }
         return null;
+    }
+
+    @Override
+    public Collection<VortexNode> getVortexNodes(String topic) {
+        Set<VortexNode> nodes = this.topics.get(topic.trim());
+        if (nodes.isEmpty()) {
+            return null;
+        }
+        return Collections.unmodifiableCollection(nodes);
+    }
+
+    @Override
+    public void onNodeSubscribe(VortexNode node, String topic) {
+        this.topics.computeIfAbsent(topic.trim(), key -> Collections.newSetFromMap(new ConcurrentHashMap<>())).add(node);
+        log.info("Node " + node.getNodeName() + " subscribed to topic " + topic);
+    }
+
+    @Override
+    public void onNodeUnsubscribe(VortexNode node, String topic) {
+        Set<VortexNode> nodes = this.topics.get(topic.trim());
+        if (nodes != null) {
+            nodes.remove(node);
+            log.info("Node " + node.getNodeName() + " unsubscribed from topic " + topic);
+        }
     }
 
     public VortexListener getListener() {

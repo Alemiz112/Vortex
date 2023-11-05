@@ -17,10 +17,7 @@ package alemiz.stargate.vortex.minecraft.node;
 
 import alemiz.stargate.StarGateSession;
 import alemiz.stargate.vortex.common.data.ChildNodeData;
-import alemiz.stargate.vortex.common.node.ClientSideNode;
-import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeOwner;
-import alemiz.stargate.vortex.common.node.VortexNodeType;
+import alemiz.stargate.vortex.common.node.*;
 import alemiz.stargate.vortex.common.protocol.packet.VortexChildInfoPacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 
@@ -35,7 +32,7 @@ import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_CLIENT_MASTE
  * During this Minecraft implementation we will asume that Master nodes will refer to transfer proxies and
  * that Child nodes will be the actual downstream servers known to the proxy.
  */
-public class MinecraftClientMasterNode extends VortexNode implements ClientSideNode {
+public class MinecraftClientMasterNode extends VortexAbstractClientNode {
 
     private final Map<String, ChildNodeData> childDataMap = new ConcurrentHashMap<>();
 

@@ -19,6 +19,8 @@ import alemiz.stargate.StarGateSession;
 import alemiz.stargate.vortex.common.node.*;
 import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 
+import java.util.Collection;
+
 import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_SERVER_MASTER;
 
 /**
@@ -33,11 +35,8 @@ public class MinecraftServerMasterNode extends VortexMasterNode {
 
     @Override
     protected boolean onMessagePacket(VortexMessagePacket packet) {
-        if (packet.getTargetNode().isEmpty()) {
-            for (VortexNode node : this.childNodes.values()) {
-                node.sendPacket(packet);
-            }
-            return true;
+        if (packet.getTargetNode().isEmpty() || !packet.getTopic().isEmpty()) {
+            return super.onMessagePacket(packet);
         }
 
         VortexNode node = this.getChildNode(packet.getTargetNode());

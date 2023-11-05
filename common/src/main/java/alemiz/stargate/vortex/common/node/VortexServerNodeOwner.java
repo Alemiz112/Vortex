@@ -16,12 +16,19 @@
 package alemiz.stargate.vortex.common.node;
 
 import java.net.InetSocketAddress;
+import java.util.Collection;
 
 public interface VortexServerNodeOwner extends VortexNodeOwner {
 
     VortexNode getVortexNode(String nodeName);
 
     VortexNode getVortexNode(InetSocketAddress address);
+
+    Collection<VortexNode> getVortexNodes(String topic);
+
+    void onNodeSubscribe(VortexNode node, String topic);
+
+    void onNodeUnsubscribe(VortexNode node, String topic);
 
     VortexNodeListener getNodeListener();
 }

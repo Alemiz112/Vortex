@@ -29,6 +29,7 @@ public class VortexPacketPool {
 
     public static final short VORTEX_LATENCY_PACKET = 0;
     public static final short VORTEX_CHILD_INFO_PACKET = 1;
+    public static final short VORTEX_TOPIC_SUBSCRIBE_PACKET = 3;
 
     private final Short2ObjectMap<PacketFactory> packetFactoryMap = new Short2ObjectOpenHashMap<>();
     private final Object2ShortMap<Class<? extends VortexPacket>> packetIdMap = new Object2ShortOpenHashMap<>();
@@ -37,6 +38,7 @@ public class VortexPacketPool {
         // Register default packets
         this.registerPacket(VortexLatencyPacket.class, VORTEX_LATENCY_PACKET, VortexLatencyPacket::new);
         this.registerPacket(VortexChildInfoPacket.class, VORTEX_CHILD_INFO_PACKET, VortexChildInfoPacket::new);
+        this.registerPacket(VortexTopicSubscribePacket.class, VORTEX_TOPIC_SUBSCRIBE_PACKET, VortexTopicSubscribePacket::new);
     }
 
     public <T extends VortexPacket> VortexPacket constructPacket(Class<T> packetClass) {

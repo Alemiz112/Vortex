@@ -38,7 +38,7 @@ public class StarGatePacketHandler extends ConnectedHandler implements PacketHan
     @Override
     public boolean handleVortexClientHandshake(VortexClientHandshakePacket packet) {
         try {
-            this.node = this.loader.createNewNode(packet.getVortexType(), this.session);
+            this.node = this.loader.createNewNode(packet.getVortexType(), packet.getTopics(), this.session);
         } catch (Throwable t) {
             log.error("Unable to create new Vortex node!", t);
             this.session.disconnect("Vortex Internal Error");

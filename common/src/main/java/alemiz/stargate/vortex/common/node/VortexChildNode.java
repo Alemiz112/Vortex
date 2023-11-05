@@ -62,6 +62,20 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
 
     @Override
     protected boolean onMessagePacket(VortexMessagePacket packet) {
+        if (!packet.getTopic().isEmpty()) {
+            Collection<VortexNode> nodes = this.getVortexParent().getVortexNodes(packet.getTopic());
+            if (nodes == null) {
+                return false;
+            }
+
+            for (VortexNode node : nodes) {
+                if (node != this) {
+                    node.sendPacket(packet);
+                }
+            }
+            return true;
+        }
+
         if (packet.getTargetNode().isEmpty()) {
             for (VortexMasterNode masterNode : this.masterNodes.values()) {
                 masterNode.sendPacket(packet);
@@ -117,5 +131,15 @@ public abstract class VortexChildNode extends VortexNode implements ServerSideNo
     @Override
     public VortexServerNodeOwner getVortexParent() {
         return (VortexServerNodeOwner) super.getVortexParent();
+    }
+
+    @Override
+    protected void subscribe0(String topic) {
+        this.getVortexParent().onNodeSubscribe(this, topic);
+    }
+
+    @Override
+    protected void unsubscribe0(String topic) {
+        this.getVortexParent().onNodeUnsubscribe(this, topic);
     }
 }

@@ -26,48 +26,30 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = false)
-public abstract class VortexMessagePacket implements VortexPacket {
+public class VortexTopicSubscribePacket implements VortexPacket {
 
-    /**
-     * Name of the master/child node which should rceive the message.
-     * Leave empty for all nodes assigned nodes
-     */
-    private String targetNode = "";
-
-    /**
-     * Name of the topic which should receive the message.
-     * This will be used only if targetNode is empty.
-     */
-    private String topic = "";
-
-    /**
-     * Name of the node which sends the message.
-     */
-    private String senderNode;
-
+    private String topic;
+    private boolean unsubscribe;
 
     @Override
-    public final void encodePayload(ByteBuf buffer) {
-        PacketHelper.writeString(buffer, this.targetNode);
+    public void encodePayload(ByteBuf buffer) {
         PacketHelper.writeString(buffer, this.topic);
-        PacketHelper.writeString(buffer, this.senderNode);
-        this.encode(buffer);
+        buffer.writeBoolean(this.unsubscribe);
     }
-
-    public abstract void encode(ByteBuf buffer);
 
     @Override
-    public final void decodePayload(ByteBuf buffer) {
-        this.targetNode = PacketHelper.readString(buffer);
+    public void decodePayload(ByteBuf buffer) {
         this.topic = PacketHelper.readString(buffer);
-        this.senderNode = PacketHelper.readString(buffer);
-        this.decode(buffer);
+        this.unsubscribe = buffer.readBoolean();
     }
-
-    public abstract void decode(ByteBuf buffer);
 
     @Override
     public boolean handle(VortexPacketListener listener) {
         return false;
+    }
+
+    @Override
+    public short getPacketId() {
+        return VortexPacketPool.VORTEX_TOPIC_SUBSCRIBE_PACKET;
     }
 }

@@ -23,11 +23,8 @@ import alemiz.stargate.vortex.common.data.VortexSettings;
 import alemiz.stargate.vortex.common.pipeline.VortexPacketDecoder;
 import alemiz.stargate.vortex.common.pipeline.VortexPacketEncoder;
 import alemiz.stargate.vortex.common.pipeline.VortexPipelineTail;
-import alemiz.stargate.vortex.common.protocol.packet.VortexLatencyPacket;
-import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
-import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
+import alemiz.stargate.vortex.common.protocol.packet.*;
 import alemiz.stargate.vortex.common.protocol.VortexPacketListener;
-import alemiz.stargate.vortex.common.protocol.packet.VortexResponse;
 import io.netty.channel.*;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.DefaultPromise;
@@ -37,7 +34,10 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -63,6 +63,8 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     private final AtomicInteger responseIdAllocator = new AtomicInteger(0);
     private final Long2ObjectMap<ResponseHandle> pendingResponses = new Long2ObjectOpenHashMap<>();
+
+    private final Set<String> subscribedTopics = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private volatile boolean closed = false;
 
@@ -144,6 +146,14 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         if (packet instanceof VortexLatencyPacket) {
             this.onPing((VortexLatencyPacket) packet);
             return true;
+        } else if (packet instanceof VortexTopicSubscribePacket && this instanceof ServerSideNode) {
+            VortexTopicSubscribePacket subscribe = (VortexTopicSubscribePacket) packet;
+            if (subscribe.isUnsubscribe()) {
+                this.unsubscribe(subscribe.getTopic());
+            } else {
+                this.subscribe(subscribe.getTopic());
+            }
+            return true;
         }
         return false;
     }
@@ -213,6 +223,9 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     public void sendPacket(VortexPacket packet) {
         if (!this.closed && this.session.getChannel().isActive()) {
+            if (packet instanceof VortexMessagePacket && ((VortexMessagePacket) packet).getSenderNode() == null) {
+                ((VortexMessagePacket) packet).setSenderNode(this.getNodeName());
+            }
             this.session.getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
@@ -239,6 +252,25 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         }
         return null;
     }
+
+    public final void subscribe(String topic) {
+        boolean success = this.subscribedTopics.add(topic);
+        if (success) {
+            this.subscribe0(topic);
+        }
+
+    }
+
+    protected abstract void subscribe0(String topic);
+
+    public final void unsubscribe(String topic) {
+        boolean success = this.subscribedTopics.remove(topic);
+        if (success) {
+            this.unsubscribe0(topic);
+        }
+    }
+
+    protected abstract void unsubscribe0(String topic);
 
     public boolean isClosed() {
         return this.closed;
@@ -268,5 +300,9 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
 
     public VortexNodeOwner getVortexParent() {
         return this.vortexParent;
+    }
+
+    public Set<String> getSubscribedTopics() {
+        return Collections.unmodifiableSet(this.subscribedTopics);
     }
 }

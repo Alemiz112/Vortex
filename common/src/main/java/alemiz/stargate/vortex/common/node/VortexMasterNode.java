@@ -20,6 +20,7 @@ import alemiz.stargate.vortex.common.protocol.packet.VortexChildInfoPacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexMessagePacket;
 import alemiz.stargate.vortex.common.protocol.packet.VortexPacket;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,7 +43,21 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
 
     @Override
     protected boolean onMessagePacket(VortexMessagePacket packet) {
-        // Broadcast any message recived from master to all child nodes
+        if (!packet.getTopic().isEmpty()) {
+            Collection<VortexNode> nodes = this.getVortexParent().getVortexNodes(packet.getTopic());
+            if (nodes == null) {
+                return false;
+            }
+
+            for (VortexNode node : nodes) {
+                if (node != this) {
+                    node.sendPacket(packet);
+                }
+            }
+            return true;
+        }
+
+        // Broadcast any message received from master to all child nodes
         for (VortexNode vortexNode : this.childNodes.values()) {
             vortexNode.sendPacket(packet);
         }
@@ -78,6 +93,16 @@ public abstract class VortexMasterNode extends VortexNode implements ServerSideN
             packet.setAction(VortexChildInfoPacket.Action.REMOVE);
             this.sendPacket(packet);
         }
+    }
+
+    @Override
+    protected void subscribe0(String topic) {
+        this.getVortexParent().onNodeSubscribe(this, topic);
+    }
+
+    @Override
+    protected void unsubscribe0(String topic) {
+        this.getVortexParent().onNodeUnsubscribe(this, topic);
     }
 
     public VortexNode getChildNode(String name) {

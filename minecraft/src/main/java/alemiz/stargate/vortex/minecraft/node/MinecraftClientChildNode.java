@@ -16,14 +16,11 @@
 package alemiz.stargate.vortex.minecraft.node;
 
 import alemiz.stargate.StarGateSession;
-import alemiz.stargate.vortex.common.node.ClientSideNode;
-import alemiz.stargate.vortex.common.node.VortexNode;
-import alemiz.stargate.vortex.common.node.VortexNodeOwner;
-import alemiz.stargate.vortex.common.node.VortexNodeType;
+import alemiz.stargate.vortex.common.node.*;
 
 import static  alemiz.stargate.vortex.minecraft.Minecraft.MINECRAFT_CLIENT_CHILD;
 
-public class MinecraftClientChildNode extends VortexNode implements ClientSideNode {
+public class MinecraftClientChildNode extends VortexAbstractClientNode {
 
     public MinecraftClientChildNode(StarGateSession session, VortexNodeOwner vortexParent) {
         super(session, vortexParent);

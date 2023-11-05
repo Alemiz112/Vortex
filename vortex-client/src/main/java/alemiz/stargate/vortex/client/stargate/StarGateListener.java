@@ -49,6 +49,9 @@ public class StarGateListener extends StarGateClientListener {
         if (settings.getMasterNodes() != null) {
             packet.getMasterNodes().addAll(settings.getMasterNodes());
         }
+        if (settings.getSubscribedTopics() != null) {
+            packet.getTopics().addAll(settings.getSubscribedTopics());
+        }
         session.sendPacket(packet);
 
         VortexNode vortexNode = vortexType.getFactory().newInstance(session, this.loader);

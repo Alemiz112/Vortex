@@ -35,12 +35,14 @@ public class VortexClientHandshakePacket extends StarGatePacket {
     private String vortexType;
     private String primaryMasterNode = "";
     private List<String> masterNodes = new ObjectArrayList<>();
+    private List<String> topics = new ObjectArrayList<>();
 
     @Override
     public void encodePayload(ByteBuf buffer) {
         PacketHelper.writeString(buffer, this.vortexType);
         PacketHelper.writeString(buffer, this.primaryMasterNode);
         PacketHelper.writeArray(buffer, this.masterNodes, PacketHelper::writeString);
+        PacketHelper.writeArray(buffer, this.topics, PacketHelper::writeString);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class VortexClientHandshakePacket extends StarGatePacket {
         this.vortexType = PacketHelper.readString(buffer);
         this.primaryMasterNode = PacketHelper.readString(buffer);
         PacketHelper.readArray(buffer, this.masterNodes, PacketHelper::readString);
+        PacketHelper.readArray(buffer, this.topics, PacketHelper::readString);
     }
 
     @Override
