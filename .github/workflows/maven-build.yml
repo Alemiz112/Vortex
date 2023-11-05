@@ -1,0 +1,39 @@
+name: Build and Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+
+      - name: Setup maven repo
+        uses: s4u/maven-settings-action@v2.6.0
+        with:
+          servers: |
+            [{
+              "id": "waterdog-snapshots",
+              "username": "${{ secrets.DEPLOY_USERNAME }}",
+              "password": "${{ secrets.DEPLOY_PASSWORD }}"
+            }]
+
+      - name: Build
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: mvn -B clean package
+        shell: bash
+
+      - name: Build and Deploy
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: mvn -B clean package deploy
+        shell: bash
