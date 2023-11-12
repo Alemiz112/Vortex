@@ -298,6 +298,10 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         this.listeners.add(vortexPacketListener);
     }
 
+    public void removeVortexPacketListener(VortexPacketListener vortexPacketListener) {
+        this.listeners.remove(vortexPacketListener);
+    }
+
     public InetSocketAddress getAddress() {
         return this.session.getAddress();
     }
