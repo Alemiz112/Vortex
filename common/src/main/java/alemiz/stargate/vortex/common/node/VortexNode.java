@@ -31,6 +31,7 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Promise;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetSocketAddress;
@@ -53,7 +54,7 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
     protected final VortexNodeOwner vortexParent;
     protected final StarGateSession session;
 
-    protected VortexPacketListener vortexPacketListener;
+    protected Set<VortexPacketListener> listeners = Collections.synchronizedSet(new ObjectOpenHashSet<>());
 
     private ScheduledFuture<?> pingFuture;
     private ScheduledFuture<?> responsesFuture;
@@ -123,8 +124,12 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
             responseHandle = this.pendingResponses.remove(((VortexResponse) packet).getResponseId());
         }
 
-        if (this.vortexPacketListener != null && packet.handle(this.vortexPacketListener)) {
-            return;
+        if (!this.listeners.isEmpty()) {
+            for (VortexPacketListener listener : this.listeners) {
+                if (packet.handle(listener)) {
+                    return;
+                }
+            }
         }
 
         if (this.handleInternal(packet)) {
@@ -284,12 +289,13 @@ public abstract class VortexNode extends SimpleChannelInboundHandler<VortexPacke
         return this.latency;
     }
 
-    public VortexPacketListener getVortexPacketListener() {
-        return this.vortexPacketListener;
+    @Deprecated
+    public void setVortexPacketListener(VortexPacketListener vortexPacketListener) {
+        this.addVortexPacketListener(vortexPacketListener);
     }
 
-    public void setVortexPacketListener(VortexPacketListener vortexPacketListener) {
-        this.vortexPacketListener = vortexPacketListener;
+    public void addVortexPacketListener(VortexPacketListener vortexPacketListener) {
+        this.listeners.add(vortexPacketListener);
     }
 
     public InetSocketAddress getAddress() {
